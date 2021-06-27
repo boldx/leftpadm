@@ -1,7 +1,7 @@
 use core::cell::UnsafeCell;
 use core::ops::{Deref, DerefMut, Drop};
 use crate::bindings;
-use crate::println;
+//use crate::println;
 
 extern "C" {
     pub fn spin_lock_init_wrapper(lock: *mut bindings::spinlock_t);
@@ -41,7 +41,7 @@ impl<T> Spinlock<T> {
     pub fn lock(&self) -> SpinlockGuard<T> {
         unsafe {
             spin_lock_wrapper(self.lock.get());
-            println!("Spinlock is locked!");
+            //println!("Spinlock is locked!");
         }
         SpinlockGuard {
             lock: unsafe { &mut *self.lock.get() },
@@ -66,7 +66,7 @@ impl<'a, T: ?Sized> DerefMut for SpinlockGuard<'a, T> {
 impl<'a, T: ?Sized> Drop for SpinlockGuard<'a, T> {
     fn drop(&mut self) {
         unsafe { spin_unlock_wrapper(self.lock) }
-        println!("Spinlock is dropped!");
+        //println!("Spinlock is dropped!");
     }
 }
 
@@ -98,7 +98,7 @@ impl<T> Mutex<T> {
     pub fn lock(&self) -> MutexGuard<T> {
         unsafe {
             mutex_lock_wrapper(self.lock.get());
-            println!("Mutex is locked!");
+            //println!("Mutex is locked!");
         }
         MutexGuard {
             lock: unsafe { &mut *self.lock.get() },
@@ -123,7 +123,7 @@ impl<'a, T: ?Sized> DerefMut for MutexGuard<'a, T> {
 impl<'a, T: ?Sized> Drop for MutexGuard<'a, T> {
     fn drop(&mut self) {
         unsafe { mutex_unlock_wrapper(self.lock) }
-        println!("Mutex is dropped!");
+        //println!("Mutex is dropped!");
     }
 }
 

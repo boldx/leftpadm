@@ -10,3 +10,12 @@ all:
 
 clean:
 	$(MAKE) -C $(KDIR) M=$(CURDIR) CC=$(CC) clean
+
+.PHONY: load
+load:
+	$(if $(strip $(shell lsmod | grep leftpad)), sudo rmmod leftpad)
+	sudo insmod leftpad.ko
+	$(eval MAJOR = $(shell cat /proc/devices | grep leftpad | cut -d' ' -f1))
+	$(if $(wildcard /dev/leftpad), sudo rm /dev/leftpad)
+	sudo mknod --mode=a=rw /dev/leftpad c $(MAJOR) 0
+

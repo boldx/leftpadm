@@ -13,4 +13,5 @@ default = ["linux-kernel-module"]
 
 [dependencies]
 linux-kernel-module = { path = "./kernel", optional = true }
+lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 

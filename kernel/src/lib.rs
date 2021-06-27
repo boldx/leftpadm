@@ -18,6 +18,7 @@ pub mod random;
 pub mod sysctl;
 mod types;
 pub mod user_ptr;
+pub mod sync;
 
 pub use crate::error::{Error, KernelResult};
 pub use crate::types::{CStr, Mode};

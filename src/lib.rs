@@ -1,39 +1,38 @@
 #![no_std]
 
 extern crate alloc;
-
-use alloc::string::String;
 use alloc::vec::Vec;
-use core::sync::atomic::{AtomicBool, Ordering};
+use alloc::string::String;
 use linux_kernel_module::{self, cstr, Error};
-//use linux_kernel_module::println;
+use linux_kernel_module::println;
+use linux_kernel_module::bindings::inode;
+use linux_kernel_module::sync::Spinlock;
+use lazy_static::*;
 
-
-static mut BUFF: Vec<u8>= Vec::new();
-
-struct LeftPadFile {
-    eof: AtomicBool,
+lazy_static! {
+    static ref BUFF: Spinlock<Vec<u8>> = Spinlock::new(Vec::<u8>::new());
 }
+
+struct LeftPadFile;
 
 impl linux_kernel_module::file_operations::FileOperations for LeftPadFile {
 
-    fn open() -> linux_kernel_module::KernelResult<Self> {
-        Ok(LeftPadFile {
-            eof: AtomicBool::new(false),
-        })
+    fn open(inode: *mut inode) -> linux_kernel_module::KernelResult<Self> {
+        println!("{:#?}", unsafe { (*inode).i_private });
+        Ok(LeftPadFile {})
     }
 
     const READ: linux_kernel_module::file_operations::ReadFn<Self> = Some(
-        |this: &Self,
+        |_this: &Self,
          _file: &linux_kernel_module::file_operations::File,
          buf: &mut linux_kernel_module::user_ptr::UserSlicePtrWriter,
-         _offset: u64|
+         offset: u64|
          -> linux_kernel_module::KernelResult<()> {
-            if !this.eof.load(Ordering::SeqCst) { 
-                let val = unsafe { BUFF.clone() }; 
+            if offset == 0 { 
+                //let val = unsafe { BUFF.clone() };
+                let val = (*BUFF.lock()).clone();
                 buf.write(&val)?;
             }
-            this.eof.store(true, Ordering::SeqCst);
             Ok(())
         },
     );
@@ -69,12 +68,14 @@ impl linux_kernel_module::file_operations::FileOperations for LeftPadFile {
                 }
             }
             let padded_str = pad_str + str_to_pad;
-
+/*
             unsafe { 
                 BUFF.clear();
                 BUFF.extend_from_slice(padded_str.as_bytes());
             }; 
-
+*/          let mut buff = BUFF.lock();
+            (*buff).clear();
+            (*buff).extend_from_slice(padded_str.as_bytes());
             Ok(())
         },
     );

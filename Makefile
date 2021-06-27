@@ -10,6 +10,8 @@ all:
 
 clean:
 	$(MAKE) -C $(KDIR) M=$(CURDIR) CC=$(CC) clean
+	rm -rf $(CURDIR)/target
+	rm  $(CURDIR)/Cargo.lock
 
 .PHONY: load
 load:

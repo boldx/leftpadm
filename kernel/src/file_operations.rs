@@ -40,10 +40,10 @@ pub enum SeekFrom {
 }
 
 unsafe extern "C" fn open_callback<T: FileOperations>(
-    inode: *mut bindings::inode,
+    _inode: *mut bindings::inode,
     file: *mut bindings::file,
 ) -> c_types::c_int {
-    let f = match T::open(inode) {
+    let f = match T::open() {
         Ok(f) => Box::new(f),
         Err(e) => return e.to_kernel_errno(),
     };
@@ -215,7 +215,7 @@ pub type SeekFn<T> = Option<fn(&T, &File, SeekFrom) -> KernelResult<u64>>;
 pub trait FileOperations: Sync + Sized {
     /// Creates a new instance of this file. Corresponds to the `open` function
     /// pointer in `struct file_operations`.
-    fn open(inode: *mut bindings::inode) -> KernelResult<Self>;
+    fn open() -> KernelResult<Self>;
 
     /// Reads data from this file to userspace. Corresponds to the `read`
     /// function pointer in `struct file_operations`.

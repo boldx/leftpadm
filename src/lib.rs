@@ -4,8 +4,7 @@ extern crate alloc;
 use alloc::vec::Vec;
 use alloc::string::String;
 use linux_kernel_module::{self, cstr, Error};
-use linux_kernel_module::println;
-use linux_kernel_module::bindings::inode;
+//use linux_kernel_module::println;
 use linux_kernel_module::sync::Spinlock;
 use lazy_static::*;
 
@@ -17,8 +16,7 @@ struct LeftPadFile;
 
 impl linux_kernel_module::file_operations::FileOperations for LeftPadFile {
 
-    fn open(inode: *mut inode) -> linux_kernel_module::KernelResult<Self> {
-        println!("{:#?}", unsafe { (*inode).i_private });
+    fn open() -> linux_kernel_module::KernelResult<Self> {
         Ok(LeftPadFile {})
     }
 

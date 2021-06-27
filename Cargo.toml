@@ -1,0 +1,16 @@
+[package]
+name = "leftpad"
+version = "0.1.0"
+authors = ["Boldx <boldx@rucsok.hu>", "Alex Gaynor <alex.gaynor@gmail.com>", "Geoffrey Thomas <geofft@ldpreload.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["staticlib"]
+test = false
+
+[features]
+default = ["linux-kernel-module"]
+
+[dependencies]
+linux-kernel-module = { path = "./kernel", optional = true }
+

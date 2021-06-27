@@ -6,7 +6,7 @@ Linux kernel module for left-padding strings. In Rust.
 
 Motivation
 ---
-I've been contemplating making something in Rust for a while, and now that [Rust in The Kernel](https://lkml.org/lkml/2021/4/14/1023]) is all the rage FOMO kicked in I guess? \
+I've been contemplating making something in Rust for a while, and now that [Rust in The Kernel](https://lkml.org/lkml/2021/4/14/1023) is all the rage FOMO kicked in I guess? \
 So this is my Rust hello world.
 
 
